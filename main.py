@@ -39,10 +39,18 @@ def download_video(url, folder):
         'extractor_args': {
             'youtube': {
                 'player_client': 'web,default',
-                'po_token': 'web+MlPJuStGMFBIx8mFCyLwhUBkzJnNfr9AcyhM-W9NjCdyeghf8isCKnn55eLrQ5Vjrp-l2jjCQhKrLumRR_AUAjiwTvssUB9Uk_QxchLq_AWVvk3dDg==',
+                'po_token': 'web+MlPJuStGMFBIx8mFCyLwhUBkzJnNfr9AcyhM-W9NjCdyeghf8isCKnn55eLrQ5Vjrp'
+                            '-l2jjCQhKrLumRR_AUAjiwTvssUB9Uk_QxchLq_AWVvk3dDg==',
             }
         },
     }
+
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+    except Exception as e:
+        progress = {'status': 'error', 'percent': 0, 'eta': 0}
+        print(f"Download error: {e}")
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
