@@ -30,17 +30,41 @@ def progress_hook(status):
 def download_video(url, folder):
     """Handles the video download process."""
     global progress
+
+    # Add your cookies here
+    cookies = {
+        "PREF": "tz=Asia.Jakarta&f4=4000000&f6=40000000&f5=30000&f7=100",
+        "wide": "1",
+        "GPS": "1",
+        "SID": "g.a000rgjUsXhrUeMAnTgEfOg3MOEBu-2rgBxDG1kuNgIGPgwUWhBQmPlEJZisCUWfltYWysdyQwACgYKAasSARMSFQHGX2Mi1ZCjF98FqukRvsZ3p8Zz-xoVAUF8yKqOu3TuabwBhRqABFUKxj610076",
+        "__Secure-1PSIDTS": "sidts-CjIB7wV3sShgIoEjhATmKKnsZqR1yYsrKk3ltZVKagWEN2EPjD624LZ2LIgRc4kkDhpZoRAA",
+        "__Secure-3PSIDTS": "sidts-CjIB7wV3sShgIoEjhATmKKnsZqR1yYsrKk3ltZVKagWEN2EPjD624LZ2LIgRc4kkDhpZoRAA",
+        "__Secure-1PSID": "g.a000rgjUsXhrUeMAnTgEfOg3MOEBu-2rgBxDG1kuNgIGPgwUWhBQktBBSzUWFs9HjxFd_uzP4QACgYKASgSARMSFQHGX2MiniZJTPEk-fAqFz3Ha93cKRoVAUF8yKqIrVzHiCQb3mFkrYfwJ39k0076",
+        "__Secure-3PSID": "g.a000rgjUsXhrUeMAnTgEfOg3MOEBu-2rgBxDG1kuNgIGPgwUWhBQOEg8ZPLXy3rBYM64lEbw1gACgYKAekSARMSFQHGX2MicXuzOeg-vNJK0pPIsVW1uxoVAUF8yKoFc9BGJ4cnqrDA2Kzqxyp50076",
+        "HSID": "A5-UDhZuW2bIc8CS_",
+        "SSID": "AbpjdmqSBnXXctrTy",
+        "APISID": "G8Bz-3uzQSQF-B_d/AcEWi6mpmIeaWqhqY",
+        "SAPISID": "n3A3XJRo6lihlheK/ApSsNqjPatLQgMhL5",
+        "__Secure-1PAPISID": "n3A3XJRo6lihlheK/ApSsNqjPatLQgMhL5",
+        "__Secure-3PAPISID": "n3A3XJRo6lihlheK/ApSsNqjPatLQgMhL5",
+        "LOGIN_INFO": "AFmmF2swRAIgVqFC3mXA9jonuTqCy6bKVYnDJa_hJAgnueRtR5geqJ4CIGRCWlX2R_9iQsAnGzDUH_pSTHZDSYPKVh_Y_CvsO8ak:QUQ3MjNmeEZqeW1lQVNqU1BOdXRpWUlTN25XX2RzMGVLTm5mb0FBRzZqbzZKcksxMjR0WFktNkY0SkpuSGY0ME40WUVDSmpXcUhPNW5TblZSeDdxN3dNZ0hWYUtDdHVCZnNxT1dWQUZCYVdhVFdaU2hXUUZrdmwtdXlIZFFEeWxMNUF2Y18zMkpLT0tuVXhGd29PMlZQcGtybDg5WnUxODdR",
+        "ST-xuwub9": "session_logininfo=AFmmF2swRAIgVqFC3mXA9jonuTqCy6bKVYnDJa_hJAgnueRtR5geqJ4CIGRCWlX2R_9iQsAnGzDUH_pSTHZDSYPKVh_Y_CvsO8ak%3AQUQ3MjNmeEZqeW1lQVNqU1BOdXRpWUlTN25XX2RzMGVLTm5mb0FBRzZqbzZKcksxMjR0WFktNkY0SkpuSGY0ME40WUVDSmpXcUhPNW5TblZSeDdxN3dNZ0hWYUtDdHVCZnNxT1dWQUZCYVdhVFdaU2hXUUZrdmwtdXlIZFFEeWxMNUF2Y18zMkpLT0tuVXhGd29PMlZQcGtybDg5WnUxODdR",
+        "SIDCC": "AKEyXzVtquWveeTgxoBYp737ZuRk4EYM19hwGkNV6Sf5-A6MNryopnPJkJOagd1_PTX-9iQkWA",
+        "__Secure-1PSIDCC": "AKEyXzUm7gg4dBxfyVmuflNeLfLDBdsv_ErsEYqNyCXvmj6V-bmOoIJdmzHua57RkG9ucaba",
+        "__Secure-3PSIDCC": "AKEyXzWa6RTbp-5i0a0he5jNbpklO30fdbAIrAInwzfN1UgObTLuTqBwqTQ1ycfWfyC2R2LQ"
+    }
+
     ydl_opts = {
         'format': 'mp4',  # Force the download to be in mp4 format.
         'outtmpl': os.path.join(folder, '%(title)s.%(ext)s'),
         'progress_hooks': [progress_hook],
         'noplaylist': True,  # Only download a single video.
         'quiet': True,  # Suppress verbose logs.
+        'cookie': cookies,  # Add the cookies here
         'extractor_args': {
             'youtube': {
                 'player_client': 'web,default',
-                'po_token': 'web+MlPJuStGMFBIx8mFCyLwhUBkzJnNfr9AcyhM-W9NjCdyeghf8isCKnn55eLrQ5Vjrp'
-                            '-l2jjCQhKrLumRR_AUAjiwTvssUB9Uk_QxchLq_AWVvk3dDg==',
+                'po_token': 'web+MlPJuStGMFBIx8mFCyLwhUBkzJnNfr9AcyhM-W9NjCdyeghf8isCKnn55eLrQ5Vjrp-l2jjCQhKrLumRR_AUAjiwTvssUB9Uk_QxchLq_AWVvk3dDg==',
             }
         },
     }
@@ -51,13 +75,6 @@ def download_video(url, folder):
     except Exception as e:
         progress = {'status': 'error', 'percent': 0, 'eta': 0}
         print(f"Download error: {e}")
-
-    try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([url])
-    except Exception as e:
-        progress = {'status': 'error', 'percent': 0, 'eta': 0}
-        print(f"Error: {e}")
 
 
 
