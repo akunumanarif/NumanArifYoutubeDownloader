@@ -2,38 +2,34 @@ from flask import Flask, render_template, request, jsonify
 import os
 import threading
 import yt_dlp
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
 DOWNLOAD_FOLDER = 'downloads'
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
-# Shared dictionary for progress tracking
-progress_data = {
-    'status': 'waiting',
-    'percent': 0,
-    'eta': 0
-}
-
-# Global variable to track the download thread
+# Global variable to track the download process
 download_thread = None
+progress = {'status': '', 'percent': 0, 'eta': 0}
 
 
 def progress_hook(status):
     """Updates progress information during download."""
+    global progress
     if status['status'] == 'downloading':
         percent = float(status['_percent_str'].strip('%'))
         eta = status.get('eta', 'N/A')
-        progress_data.update({'status': 'downloading', 'percent': percent, 'eta': eta})
+        progress = {'status': 'downloading', 'percent': percent, 'eta': eta}
     elif status['status'] == 'finished':
-        progress_data.update({'status': 'finished', 'percent': 100, 'eta': 0})
+        progress = {'status': 'finished', 'percent': 100, 'eta': 0}
     elif status['status'] == 'error':
-        progress_data.update({'status': 'error', 'percent': 0, 'eta': 0})
+        progress = {'status': 'error', 'percent': 0, 'eta': 0}
 
 
 def download_video(url, folder):
     """Handles the video download process."""
-    progress_data.update({'status': 'initializing', 'percent': 0, 'eta': 0})
+    global progress
     ydl_opts = {
         'format': 'mp4',  # Force the download to be in mp4 format.
         'outtmpl': os.path.join(folder, '%(title)s.%(ext)s'),
@@ -46,7 +42,7 @@ def download_video(url, folder):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
     except Exception as e:
-        progress_data.update({'status': 'error', 'percent': 0, 'eta': 0})
+        progress = {'status': 'error', 'percent': 0, 'eta': 0}
 
 
 def start_download_thread(url, folder):
@@ -58,7 +54,7 @@ def start_download_thread(url, folder):
 
 @app.route('/')
 def index():
-    return render_template('index.html', progress=progress_data)
+    return render_template('index.html')
 
 
 @app.route('/download', methods=['POST'])
@@ -69,6 +65,8 @@ def download():
     if not url or not folder:
         return jsonify({"error": "Please provide a valid URL and download folder."})
 
+    progress['status'] = 'initializing'
+    progress['percent'] = 0
     start_download_thread(url, folder)
     return jsonify({"status": "Download started."})
 
@@ -76,7 +74,7 @@ def download():
 @app.route('/progress')
 def check_progress():
     """Check the current download progress."""
-    return jsonify(progress_data)
+    return jsonify(progress)
 
 
 if __name__ == "__main__":
