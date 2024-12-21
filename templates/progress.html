@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Progress</title>
+</head>
+<body>
+    <h1>Download Progress</h1>
+    <p>Status: {{ progress.status }}</p>
+    <p>Progress: {{ progress.percent }}%</p>
+    <p>ETA: {{ progress.eta }} seconds</p>
+
+    {% if progress.status == 'finished' %}
+        <p>Download complete! <a href="{{ url_for('download', filename='%(title)s.%(ext)s') }}">Click here to download</a></p>
+    {% elif progress.status == 'error' %}
+        <p>Error occurred during download. Please try again.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Downloader</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+        #progress-bar div {
+            height: 30px;
+            width: 0%;
+            background-color: #4caf50;
+            text-align: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>YouTube Video Downloader</h1>
+    <form id="download-form">
+        <label for="url">YouTube URL:</label>
+        <input type="text" id="url" name="url" required>
+        <button type="submit">Download</button>
+    </form>
+
+    <div id="progress-bar">
+        <div id="progress"></div>
+    </div>
+    <p id="status">{{ progress['status'] }}</p>
+
+    <script>
+        $(document).ready(function() {
+            // Display initial message if no progress yet
+            if ('{{ progress["status"] }}' === 'waiting') {
+                $('#status').text('Please input a URL and hit the download button');
+            }
+
+            $('#download-form').submit(function(event) {
+                event.preventDefault();
+                let url = $('#url').val();
+
+                // Start the download request
+                $.post('/download', { url: url }, function(response) {
+                    $('#status').text(response.status);
+                });
+            });
+
+            // Poll for progress updates
+            function updateProgress() {
+                $.get('/progress', function(data) {
+                    if (data.status === 'finished') {
+                        $('#status').text('Download complete!');
+                        $('#progress').width('100%');
+                    } else if (data.status === 'error') {
+                        $('#status').text('Error occurred during download.');
+                    } else {
+                        $('#status').text('Downloading... ' + data.percent.toFixed(2) + '% (ETA: ' + data.eta + 's)');
+                        $('#progress').width(data.percent + '%');
+                    }
+                });
+            }
+
+            // Update progress every second
+            setInterval(updateProgress, 1000);
+        });
+    </script>
+</body>
+</html>
