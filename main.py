@@ -36,6 +36,12 @@ def download_video(url, folder):
         'progress_hooks': [progress_hook],
         'noplaylist': True,  # Only download a single video.
         'quiet': True,  # Suppress verbose logs.
+        'extractor_args': {
+            'youtube': {
+                'player_client': 'web,default',
+                'po_token': 'web+MlPJuStGMFBIx8mFCyLwhUBkzJnNfr9AcyhM-W9NjCdyeghf8isCKnn55eLrQ5Vjrp-l2jjCQhKrLumRR_AUAjiwTvssUB9Uk_QxchLq_AWVvk3dDg==',
+            }
+        },
     }
 
     try:
@@ -43,6 +49,8 @@ def download_video(url, folder):
             ydl.download([url])
     except Exception as e:
         progress = {'status': 'error', 'percent': 0, 'eta': 0}
+        print(f"Error: {e}")
+
 
 
 def start_download_thread(url, folder):
