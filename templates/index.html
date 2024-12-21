@@ -32,20 +32,16 @@
     <div id="progress-bar">
         <div id="progress"></div>
     </div>
-    <p id="status">{{ progress['status'] }}</p>
+    <p id="status"></p>
 
     <script>
         $(document).ready(function() {
-            // Display initial message if no progress yet
-            if ('{{ progress["status"] }}' === 'waiting') {
-                $('#status').text('Please input a URL and hit the download button');
-            }
+            $('#status').text('Please input a URL and hit the download button');
 
             $('#download-form').submit(function(event) {
                 event.preventDefault();
                 let url = $('#url').val();
 
-                // Start the download request
                 $.post('/download', { url: url }, function(response) {
                     $('#status').text(response.status);
                 });
@@ -59,6 +55,8 @@
                         $('#progress').width('100%');
                     } else if (data.status === 'error') {
                         $('#status').text('Error occurred during download.');
+                    } else if (data.status === 'waiting') {
+                        $('#status').text('Please input a URL and hit the download button');
                     } else {
                         $('#status').text('Downloading... ' + data.percent.toFixed(2) + '% (ETA: ' + data.eta + 's)');
                         $('#progress').width(data.percent + '%');
@@ -66,8 +64,7 @@
                 });
             }
 
-            // Update progress every second
-            setInterval(updateProgress, 1000);
+            setInterval(updateProgress, 1000); // Update progress every second
         });
     </script>
 </body>
